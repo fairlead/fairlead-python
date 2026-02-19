@@ -1,0 +1,53 @@
+name: 🏷️ Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: 🎉 Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔐 Generate Robot App token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_PRIVATE_KEY }}
+
+      - name: 📥 Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: "${{ steps.app-token.outputs.token }}"
+
+      - name: 🛠️ Setup UV
+        uses: astral-sh/setup-uv@v7
+        with:
+          activate-environment: true
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: 🐍 Setup Python
+        run: uv python install
+
+      - name: 🔄 Sync dependencies
+        run: uv sync --all-extras
+
+      - name: 🚀 Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          extra_plugins: |
+            @semantic-release/exec@6
+            @semantic-release/git@10
+        env:
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true

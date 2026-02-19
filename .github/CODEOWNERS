@@ -1,0 +1,5 @@
+# Default owner for all files.
+* @mataki-dev/sdk-maintainers
+
+# CI/CD and workflow changes require engineering review.
+/.github/ @mataki-dev/engineering

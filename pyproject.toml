@@ -1,0 +1,55 @@
+[project]
+name = "mataki"
+version = "0.1.0"
+description = "Official Python client for the Mataki API"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Mataki", email = "support@mataki.dev" }]
+dependencies = [
+    "httpx>=0.25,<1",
+    "pydantic>=2,<3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "respx>=0.21",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mataki"]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "UP", "B", "SIM", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# Resource classes have a `list` method that shadows the builtin `list` type.
+# Use typing.List/Dict in these files to avoid mypy valid-type errors.
+"src/mataki/resources/*.py" = ["UP006", "UP035"]
+
+[tool.mypy]
+mypy_path = "src"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = "respx.*"
+ignore_missing_imports = true
