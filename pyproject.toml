@@ -8,7 +8,7 @@ license = "MIT"
 authors = [{ name = "Mataki", email = "support@mataki.dev" }]
 dependencies = [
     "httpx>=0.25,<1",
-    "pydantic>=2,<3",
+    "pydantic>=2.13.0,<3",
 ]
 
 [dependency-groups]
